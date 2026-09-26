@@ -215,7 +215,7 @@ Measured at the time of writing.
 | JavaScript | 3 modules, 21 lines, no libraries |
 | Public page weight | ~5 KB gzipped for HTML, CSS and JS, plus ~51 KB of fonts on first visit |
 | Cookies on the public page | none |
-| Docker image | ~540 MB |
+| Docker image | ~460 MB |
 
 ## License
 

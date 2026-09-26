@@ -1,7 +1,14 @@
 class SessionsController < ApplicationController
   layout "admin"
   allow_unauthenticated_access only: %i[ new create ]
-  rate_limit to: 10, within: 3.minutes, only: :create, with: -> { redirect_to new_session_path, alert: "Try again later." }
+
+  # Throttle login attempts. This needs its own store: the app's default cache
+  # is null in test and unreliable for counting in production, which silently
+  # disables the limit. A dedicated in-process MemoryStore always counts, and
+  # the app runs as a single Puma process, so one store covers every request.
+  RATE_LIMIT_STORE = ActiveSupport::Cache::MemoryStore.new
+  rate_limit to: 10, within: 3.minutes, store: RATE_LIMIT_STORE, only: :create,
+    with: -> { redirect_to new_session_path, alert: "Try again later." }
 
   def new
   end

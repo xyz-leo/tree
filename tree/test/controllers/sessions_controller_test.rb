@@ -98,6 +98,18 @@ class SessionsControllerTest < ActionDispatch::IntegrationTest
     assert_empty cookies[:session_id]
   end
 
+  test "rate limits repeated login attempts" do
+    SessionsController::RATE_LIMIT_STORE.clear
+
+    10.times { post session_path, params: { email_address: @user.email_address, password: "wrong" } }
+    post session_path, params: { email_address: @user.email_address, password: "wrong" }
+
+    assert_redirected_to new_session_path
+    assert_equal "Try again later.", flash[:alert]
+  ensure
+    SessionsController::RATE_LIMIT_STORE.clear
+  end
+
   test "there is no password reset" do
     get "/passwords/new"
 
