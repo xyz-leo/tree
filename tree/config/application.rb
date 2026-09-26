@@ -30,9 +30,6 @@ module Tree
     # config.time_zone = "Central Time (US & Canada)"
     # config.eager_load_paths << Rails.root.join("extras")
 
-    # Page content (see LinkTree).
-    config.x.links_file = Rails.root.join("config/links.yml")
-
     # Don't generate system test files.
     config.generators.system_tests = nil
   end

@@ -1,13 +1,14 @@
-<% content_for :title, @tree.handle %>
-<% content_for :description, @tree.bio if @tree.bio %>
+<% content_for :title, @profile.handle %>
+<% bio = @profile.bio(@lang) %>
+<% content_for :description, bio if bio.present? %>
 
 <main class="page">
   <header class="page-header">
-    <h1><%= @tree.name %></h1>
-    <% if @tree.bio %>
-      <p class="bio"><%= @tree.bio %></p>
+    <h1><%= @profile.name %></h1>
+    <% if bio.present? %>
+      <p class="bio"><%= bio %></p>
     <% end %>
   </header>
 
-  <%= render partial: "group", collection: @tree.groups %>
+  <%= render partial: "group", collection: @groups, locals: { lang: @lang } %>
 </main>

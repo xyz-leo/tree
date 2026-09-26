@@ -90,6 +90,31 @@ class LinksControllerTest < ActionDispatch::IntegrationTest
     assert_select "button.theme-toggle[aria-label=?]", "Toggle light theme"
   end
 
+  test "follows the order set by position" do
+    link_groups(:projects).update!(position: 0)
+    links(:email).update!(position: 0)
+
+    get root_path
+
+    assert_equal [ "Projetos", "Social" ], css_select(".group-header").map { it.text.strip }
+    assert_equal [ "tree", "Email", "GitHub" ], css_select(".group-list a").map(&:text)
+  end
+
+  test "hides groups without links" do
+    get en_path
+
+    assert_select ".group-header", text: "Empty", count: 0
+  end
+
+  test "renders with no profile saved yet" do
+    Profile.delete_all
+
+    get root_path
+
+    assert_response :success
+    assert_select "h1", "Tree"
+  end
+
   test "other languages are not routed" do
     get "/es"
 

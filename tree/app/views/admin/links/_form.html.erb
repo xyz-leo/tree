@@ -1,0 +1,44 @@
+<%= form_with model: link, url: link.new_record? ? admin_link_group_links_path(link.link_group) : admin_link_path(link), class: "form" do |form| %>
+  <%= render "admin/errors", record: link %>
+
+  <div class="field">
+    <%= form.label :title %>
+    <%= form.text_field :title, required: true %>
+  </div>
+
+  <div class="field">
+    <%= form.label :url, "URL" %>
+    <%= form.text_field :url, required: true, inputmode: "url", placeholder: "https://…" %>
+    <small>https://, http:// or mailto:. GitHub, Instagram, X, LinkedIn, Facebook, YouTube and email links get an icon.</small>
+  </div>
+
+  <div class="field">
+    <%= form.label :hint_pt, "Hint (PT)" %>
+    <%= form.text_field :hint_pt %>
+    <small>Optional short text shown after the title.</small>
+  </div>
+
+  <div class="field">
+    <%= form.label :hint_en, "Hint (EN)" %>
+    <%= form.text_field :hint_en %>
+    <small>Leave blank to use the Portuguese text.</small>
+  </div>
+
+  <% unless link.new_record? %>
+    <div class="field">
+      <%= form.label :link_group_id, "Group" %>
+      <%= form.collection_select :link_group_id, LinkGroup.ordered, :id, :label_pt %>
+    </div>
+  <% end %>
+
+  <div class="field">
+    <%= form.label :position %>
+    <%= form.number_field :position, step: 1 %>
+    <small>Lower comes first. Leave blank to add at the end.</small>
+  </div>
+
+  <div class="form-actions">
+    <%= form.submit "Save", class: "btn" %>
+    <%= link_to "Cancel", admin_root_path, class: "action" %>
+  </div>
+<% end %>

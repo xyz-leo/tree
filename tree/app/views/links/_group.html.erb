@@ -1,12 +1,13 @@
 <section class="group">
-  <h2 class="group-header label"><%= group.label %></h2>
+  <h2 class="group-header label"><%= group.label(lang) %></h2>
   <ul class="group-list">
     <% group.links.each do |link| %>
       <% icon = link_icon_name(link.url) %>
+      <% hint = link.hint(lang) %>
       <li class="<%= "has-icon" if icon %>">
         <% if icon %><%= render "icons/#{icon}" %><% end %>
         <%= link_to link.title, link.url %>
-        <% if link.hint %><span class="hint"><%= link.hint %></span><% end %>
+        <% if hint.present? %><span class="hint"><%= hint %></span><% end %>
       </li>
     <% end %>
   </ul>

@@ -1,0 +1,57 @@
+<% content_for :title, "Admin" %>
+
+<section class="panel">
+  <div class="panel-header">
+    <h1 class="label">Profile</h1>
+    <%= link_to "Edit", edit_admin_profile_path, class: "action" %>
+  </div>
+  <dl class="details">
+    <dt>Name</dt><dd><%= @profile.name %></dd>
+    <dt>Handle</dt><dd><%= @profile.handle %></dd>
+    <dt>Bio (PT)</dt><dd><%= @profile.bio_pt.presence || "—" %></dd>
+    <dt>Bio (EN)</dt><dd><%= @profile.bio_en.presence || "—" %></dd>
+  </dl>
+</section>
+
+<% @groups.each do |group| %>
+  <section class="panel">
+    <div class="panel-header">
+      <h2 class="label">
+        <%= group.label_pt %><% if group.label_en.present? %> / <%= group.label_en %><% end %>
+        <span class="position">#<%= group.position %></span>
+      </h2>
+      <div class="actions">
+        <%= link_to "Edit", edit_admin_link_group_path(group), class: "action" %>
+        <%= button_to "Delete", admin_link_group_path(group), method: :delete, class: "action",
+              form: { data: { confirm: "Delete the group \"#{group.label_pt}\" and its #{pluralize(group.links.size, "link")}?" } } %>
+      </div>
+    </div>
+
+    <% if group.links.any? %>
+      <ul class="admin-list">
+        <% group.links.each do |link| %>
+          <li>
+            <div class="admin-list-main">
+              <span class="position">#<%= link.position %></span>
+              <%= link.title %>
+              <span class="hint"><%= link.url %></span>
+            </div>
+            <div class="actions">
+              <%= link_to "Edit", edit_admin_link_path(link), class: "action" %>
+              <%= button_to "Delete", admin_link_path(link), method: :delete, class: "action",
+                    form: { data: { confirm: "Delete the link \"#{link.title}\"?" } } %>
+            </div>
+          </li>
+        <% end %>
+      </ul>
+    <% else %>
+      <p class="empty">No links yet. Empty groups are hidden on the page.</p>
+    <% end %>
+
+    <div class="panel-footer">
+      <%= link_to "Add link", new_admin_link_group_link_path(group), class: "action" %>
+    </div>
+  </section>
+<% end %>
+
+<%= link_to "Add group", new_admin_link_group_path, class: "btn" %>

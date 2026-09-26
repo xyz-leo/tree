@@ -10,7 +10,36 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_09_26_204338) do
+ActiveRecord::Schema[8.1].define(version: 2026_09_26_205613) do
+  create_table "link_groups", force: :cascade do |t|
+    t.string "label_pt", null: false
+    t.string "label_en"
+    t.integer "position", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "links", force: :cascade do |t|
+    t.integer "link_group_id", null: false
+    t.string "title", null: false
+    t.string "url", null: false
+    t.string "hint_pt"
+    t.string "hint_en"
+    t.integer "position", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["link_group_id"], name: "index_links_on_link_group_id"
+  end
+
+  create_table "profiles", force: :cascade do |t|
+    t.string "name", null: false
+    t.string "handle", null: false
+    t.text "bio_pt"
+    t.text "bio_en"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "sessions", force: :cascade do |t|
     t.integer "user_id", null: false
     t.string "ip_address"
@@ -28,5 +57,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_26_204338) do
     t.index ["email_address"], name: "index_users_on_email_address", unique: true
   end
 
+  add_foreign_key "links", "link_groups"
   add_foreign_key "sessions", "users"
 end

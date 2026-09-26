@@ -1,6 +1,8 @@
 # Tree
 
-Self-hosted link tree page built with Rails. No database, no auth: links live in a YAML file.
+Self-hosted link tree page built with Rails. Content is edited in a small admin panel at `/admin`
+(sign in at `/sessions/new`); the single admin user is created from `ADMIN_EMAIL` and `ADMIN_PASSWORD`
+by `bin/rails db:seed`.
 
 ## Development
 
@@ -15,7 +17,7 @@ bin/ci         # lint, security scans, tests
 Runs as a Docker container behind Caddy on a shared Docker network. From the repo root:
 
 ```sh
-cp docker/.env.example docker/.env   # set RAILS_MASTER_KEY and APP_HOSTS
+cp docker/.env.example docker/.env   # set RAILS_MASTER_KEY, APP_HOSTS, ADMIN_EMAIL, ADMIN_PASSWORD
 docker compose -f docker/compose.yml up -d --build
 ```
 

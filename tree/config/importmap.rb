@@ -2,3 +2,4 @@
 
 pin "application"
 pin "theme"
+pin "confirm"

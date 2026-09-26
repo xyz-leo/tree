@@ -1,0 +1,25 @@
+<%= form_with model: [ :admin, link_group ], class: "form" do |form| %>
+  <%= render "admin/errors", record: link_group %>
+
+  <div class="field">
+    <%= form.label :label_pt, "Label (PT)" %>
+    <%= form.text_field :label_pt, required: true %>
+  </div>
+
+  <div class="field">
+    <%= form.label :label_en, "Label (EN)" %>
+    <%= form.text_field :label_en %>
+    <small>Leave blank to use the Portuguese text.</small>
+  </div>
+
+  <div class="field">
+    <%= form.label :position %>
+    <%= form.number_field :position, step: 1 %>
+    <small>Lower comes first. Leave blank to add at the end.</small>
+  </div>
+
+  <div class="form-actions">
+    <%= form.submit "Save", class: "btn" %>
+    <%= link_to "Cancel", admin_root_path, class: "action" %>
+  </div>
+<% end %>

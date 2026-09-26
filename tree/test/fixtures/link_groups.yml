@@ -1,0 +1,13 @@
+social:
+  label_pt: Social
+  position: 1
+
+projects:
+  label_pt: Projetos
+  label_en: Projects
+  position: 2
+
+empty:
+  label_pt: Vazio
+  label_en: Empty
+  position: 3

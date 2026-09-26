@@ -1,0 +1,5 @@
+main:
+  name: Test Person
+  handle: test-handle
+  bio_pt: Bio em português.
+  bio_en: Bio in English.

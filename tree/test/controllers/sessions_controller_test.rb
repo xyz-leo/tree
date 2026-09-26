@@ -17,15 +17,23 @@ class SessionsControllerTest < ActionDispatch::IntegrationTest
   test "signs in with valid credentials" do
     post session_path, params: { email_address: @user.email_address, password: "correct horse battery" }
 
-    assert_redirected_to root_path
+    assert_redirected_to admin_root_path
     assert cookies[:session_id].present?
     assert_equal 1, @user.sessions.count
+  end
+
+  test "returns to the admin page that asked for sign in" do
+    get edit_admin_profile_path
+    assert_redirected_to new_session_path
+
+    post session_path, params: { email_address: @user.email_address, password: "correct horse battery" }
+    assert_redirected_to edit_admin_profile_url
   end
 
   test "email is matched case-insensitively" do
     post session_path, params: { email_address: " ADMIN@example.com ", password: "correct horse battery" }
 
-    assert_redirected_to root_path
+    assert_redirected_to admin_root_path
   end
 
   test "rejects a wrong password" do

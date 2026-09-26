@@ -1,17 +1,17 @@
 <header class="site-header">
   <div class="site-header-inner">
-    <%= link_to tree.handle, lang_path(tree.lang), class: "brand" %>
+    <%= link_to profile.handle, lang_path(lang), class: "brand" %>
     <nav class="site-header-right" aria-label="Idioma / Language">
       <div class="lang-switch">
-        <% LinkTree::LANGS.each_with_index do |lang, i| %>
+        <% Translatable::LANGS.each_with_index do |option, i| %>
           <% if i > 0 %><span class="lang-sep" aria-hidden="true">|</span><% end %>
-          <%= link_to lang.upcase, lang_path(lang),
-                class: [ "lang-option", { active: lang == tree.lang } ],
-                hreflang: html_lang(lang), lang: html_lang(lang),
-                aria: { current: ("page" if lang == tree.lang) } %>
+          <%= link_to option.upcase, lang_path(option),
+                class: [ "lang-option", { active: option == lang } ],
+                hreflang: html_lang(option), lang: html_lang(option),
+                aria: { current: ("page" if option == lang) } %>
         <% end %>
       </div>
-      <%= render "layouts/theme_toggle", label: tree.lang == "en" ? "Toggle light theme" : "Alternar tema claro" %>
+      <%= render "layouts/theme_toggle", label: lang == "en" ? "Toggle light theme" : "Alternar tema claro" %>
     </nav>
   </div>
 </header>

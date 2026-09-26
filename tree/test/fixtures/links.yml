@@ -1,0 +1,20 @@
+github:
+  link_group: social
+  title: GitHub
+  url: https://github.com/test-handle
+  hint_pt: "@test-handle"
+  position: 1
+
+email:
+  link_group: social
+  title: Email
+  url: mailto:test@example.com
+  position: 2
+
+tree:
+  link_group: projects
+  title: tree
+  url: https://example.com/tree
+  hint_pt: esta página
+  hint_en: this page
+  position: 1
