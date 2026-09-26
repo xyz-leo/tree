@@ -1,0 +1,4 @@
+# Mark vendored files as vendored.
+tree/vendor/* linguist-vendored
+
+tree/config/credentials.yml.enc diff=rails_credentials

@@ -1,0 +1,24 @@
+# Local notes and scratch space
+/CLAUDE.md
+/tmp/
+
+# Secrets
+/tree/config/*.key
+.env
+.env.*
+!.env.example
+
+# Bundler
+/tree/.bundle
+
+# Logs and tempfiles (keep the directories)
+/tree/log/*
+!/tree/log/.keep
+/tree/tmp/*
+!/tree/tmp/.keep
+!/tree/tmp/pids/
+/tree/tmp/pids/*
+!/tree/tmp/pids/.keep
+
+# Compiled assets
+/tree/public/assets

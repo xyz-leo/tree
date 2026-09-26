@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="<%= html_lang(@tree.lang) %>">
+  <head>
+    <meta charset="utf-8">
+    <title><%= content_for(:title) || "Tree" %></title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <%# Apply the saved theme before first paint to avoid a flash of the dark theme. %>
+    <%= javascript_tag nonce: true do %>
+      try { if (localStorage.getItem("theme") === "light") document.documentElement.dataset.theme = "light"; } catch (e) {}
+    <% end %>
+    <% if content_for?(:description) %>
+      <meta name="description" content="<%= content_for(:description) %>">
+    <% end %>
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+
+    <% LinkTree::LANGS.each do |lang| %>
+      <link rel="alternate" hreflang="<%= html_lang(lang) %>" href="<%= lang_url(lang) %>">
+    <% end %>
+    <link rel="alternate" hreflang="x-default" href="<%= root_url %>">
+
+    <%= yield :head %>
+
+    <link rel="icon" href="/icon.png" type="image/png">
+    <link rel="icon" href="/icon.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="/icon.png">
+
+    <%# Includes all stylesheet files in app/assets/stylesheets %>
+    <%= stylesheet_link_tag :app %>
+    <%= javascript_importmap_tags %>
+  </head>
+
+  <body>
+    <%= render "layouts/header", tree: @tree %>
+    <%= yield %>
+  </body>
+</html>

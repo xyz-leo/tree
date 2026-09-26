@@ -1,0 +1,13 @@
+<% content_for :title, @tree.handle %>
+<% content_for :description, @tree.bio if @tree.bio %>
+
+<main class="page">
+  <header class="page-header">
+    <h1><%= @tree.name %></h1>
+    <% if @tree.bio %>
+      <p class="bio"><%= @tree.bio %></p>
+    <% end %>
+  </header>
+
+  <%= render partial: "group", collection: @tree.groups %>
+</main>

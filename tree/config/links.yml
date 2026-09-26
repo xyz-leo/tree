@@ -1,0 +1,30 @@
+# Content of the page. Any text value can be a plain string (same in both
+# languages) or a pt/en pair:
+#
+#   hint: "@xyz-leo"
+#   hint:
+#     pt: blog pessoal
+#     en: personal blog
+
+name: Leo
+handle: xyz-leo
+bio:
+  pt: Desenvolvedor de software. Ruby, Rails e Linux.
+  en: Software developer. Ruby, Rails and Linux.
+
+groups:
+  - label: Social
+    links:
+      - title: GitHub
+        url: https://github.com/xyz-leo
+        hint: "@xyz-leo"
+
+  - label:
+      pt: Projetos
+      en: Projects
+    links:
+      - title: tree
+        url: https://github.com/xyz-leo/tree
+        hint:
+          pt: esta página
+          en: this page
