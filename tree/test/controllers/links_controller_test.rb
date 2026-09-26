@@ -14,6 +14,14 @@ class LinksControllerTest < ActionDispatch::IntegrationTest
     assert_select ".hint", "esta página"
   end
 
+  test "the page is public" do
+    get root_path
+    assert_response :success
+
+    get en_path
+    assert_response :success
+  end
+
   test "/en renders the english page" do
     get en_path
 

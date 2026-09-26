@@ -3,6 +3,9 @@ Rails.application.routes.draw do
   # Can be used by load balancers and uptime monitors to verify that the app is live.
   get "up" => "rails/health#show", as: :rails_health_check
 
+  # Sign in at /sessions/new. There is a single user, created by db/seeds.rb.
+  resource :session, path: "sessions", only: %i[ new create destroy ]
+
   # Portuguese is the default; English lives under /en.
   root "links#index", lang: "pt"
   get "en" => "links#index", lang: "en", as: :en

@@ -20,5 +20,9 @@
 /tree/tmp/pids/*
 !/tree/tmp/pids/.keep
 
+# SQLite databases (keep the directory)
+/tree/storage/*
+!/tree/storage/.keep
+
 # Compiled assets
 /tree/public/assets

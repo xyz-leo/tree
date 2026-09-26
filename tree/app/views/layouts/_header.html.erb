@@ -11,11 +11,7 @@
                 aria: { current: ("page" if lang == tree.lang) } %>
         <% end %>
       </div>
-      <button type="button" class="icon-btn theme-toggle" data-action="toggle-theme"
-              aria-label="<%= tree.lang == "en" ? "Toggle light theme" : "Alternar tema claro" %>">
-        <%= render "icons/sun" %>
-        <%= render "icons/moon" %>
-      </button>
+      <%= render "layouts/theme_toggle", label: tree.lang == "en" ? "Toggle light theme" : "Alternar tema claro" %>
     </nav>
   </div>
 </header>

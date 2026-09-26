@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title><%= content_for(:title) || "Admin" %></title>
+    <meta name="robots" content="noindex, nofollow">
+    <%= render "layouts/head" %>
+  </head>
+
+  <body>
+    <header class="site-header">
+      <div class="site-header-inner">
+        <%= link_to "tree", root_path, class: "brand" %>
+        <nav class="site-header-right" aria-label="Admin">
+          <% if authenticated? %>
+            <%= button_to "Sign out", session_path, method: :delete, class: "header-link" %>
+          <% end %>
+          <%= render "layouts/theme_toggle", label: "Toggle light theme" %>
+        </nav>
+      </div>
+    </header>
+
+    <main class="page">
+      <% flash.each do |type, message| %>
+        <p class="flash flash-<%= type %>" role="<%= type == "alert" ? "alert" : "status" %>"><%= message %></p>
+      <% end %>
+      <%= yield %>
+    </main>
+  </body>
+</html>

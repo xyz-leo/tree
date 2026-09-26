@@ -13,6 +13,8 @@ services:
     container_name: tree
     restart: unless-stopped
     env_file: .env
+    volumes:
+      - storage:/rails/storage   # SQLite database
     healthcheck:
       test: ["CMD", "curl", "-fsS", "http://localhost/up"]
       interval: 30s
@@ -20,6 +22,9 @@ services:
       retries: 3
     networks:
       - caddy
+
+volumes:
+  storage:
 
 networks:
   caddy:

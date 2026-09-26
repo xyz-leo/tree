@@ -1,8 +1,9 @@
 require_relative "boot"
 
 require "rails"
-# Only the frameworks this app uses: no database, mail, jobs, storage or websockets.
+# Only the frameworks this app uses: no mail, jobs, file storage or websockets.
 require "active_model/railtie"
+require "active_record/railtie"
 require "action_controller/railtie"
 require "action_view/railtie"
 require "rails/test_unit/railtie"

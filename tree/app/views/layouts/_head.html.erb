@@ -1,0 +1,16 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<%# Apply the saved theme before first paint to avoid a flash of the dark theme. %>
+<%= javascript_tag nonce: true do %>
+  try { if (localStorage.getItem("theme") === "light") document.documentElement.dataset.theme = "light"; } catch (e) {}
+<% end %>
+<%= csrf_meta_tags %>
+<%= csp_meta_tag %>
+
+<link rel="icon" href="/icon.png" type="image/png">
+<link rel="icon" href="/icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/icon.png">
+
+<%# Includes all stylesheet files in app/assets/stylesheets %>
+<%= stylesheet_link_tag :app %>
+<%= javascript_importmap_tags %>
