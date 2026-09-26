@@ -1,0 +1,83 @@
+#!/usr/bin/env bash
+# Asks for your settings, starts the app with Docker Compose and creates (or
+# updates) the admin user. Run it again any time to change any of them.
+#
+# The admin password is never written to disk: it goes straight to the app,
+# which stores only its bcrypt hash in the database.
+set -euo pipefail
+cd "$(dirname "$0")"
+
+command -v docker >/dev/null || { echo "Docker is required: https://docs.docker.com/engine/install/"; exit 1; }
+docker compose version >/dev/null 2>&1 || { echo "Docker Compose v2 is required."; exit 1; }
+
+# Values from a previous run become the defaults.
+current() { [ -f .env ] && sed -n "s/^$1='\(.*\)'$/\1/p" .env | tail -1 || true; }
+running() { [ -n "$(docker compose ps -q --status running tree 2>/dev/null)" ]; }
+current_email() { running && docker compose exec -T tree bin/rails runner 'print User.first&.email_address' </dev/null 2>/dev/null || true; }
+
+ask() { # variable, prompt, default
+  local answer
+  read -rp "$2${3:+ [$3]}: " answer
+  printf -v "$1" '%s' "${answer:-$3}"
+}
+
+echo "tree setup"
+echo
+
+ask DOMAIN "Domain (e.g. links.example.com)" "$(current APP_HOSTS)"
+while [[ ! "$DOMAIN" =~ ^[A-Za-z0-9.-]+$ ]]; do ask DOMAIN "Enter a domain like links.example.com" ""; done
+
+ask PROXY_NETWORK "Docker network of your reverse proxy" "$(current PROXY_NETWORK | grep . || echo caddy)"
+while [[ ! "$PROXY_NETWORK" =~ ^[A-Za-z0-9_.-]+$ ]]; do ask PROXY_NETWORK "Enter a network name" "caddy"; done
+
+existing_email="$(current_email)"
+ask ADMIN_EMAIL "Admin email" "$existing_email"
+while [[ ! "$ADMIN_EMAIL" =~ ^[^@[:space:]]+@[^@[:space:]]+$ ]]; do ask ADMIN_EMAIL "Enter a valid email" ""; done
+
+while true; do
+  read -rsp "Admin password (12+ characters${existing_email:+, Enter to keep the current one}): " ADMIN_PASSWORD; echo
+  if [ -z "$ADMIN_PASSWORD" ] && [ -n "$existing_email" ]; then break; fi
+  if [ "${#ADMIN_PASSWORD}" -lt 12 ]; then echo "Too short: use at least 12 characters."; continue; fi
+  read -rsp "Repeat password: " confirm; echo
+  [ "$ADMIN_PASSWORD" = "$confirm" ] && break
+  echo "Passwords don't match."
+done
+
+(
+  umask 077
+  cat > .env <<ENV
+# Written by ./setup. Run it again to change these.
+APP_HOSTS='$DOMAIN'
+PROXY_NETWORK='$PROXY_NETWORK'
+ENV
+)
+
+if ! docker network inspect "$PROXY_NETWORK" >/dev/null 2>&1; then
+  echo "Creating Docker network $PROXY_NETWORK (connect your reverse proxy to it)."
+  docker network create "$PROXY_NETWORK" >/dev/null
+fi
+
+echo
+docker compose up -d --build </dev/null
+
+echo
+echo "Waiting for the app to start..."
+for _ in $(seq 1 60); do
+  docker compose exec -T tree curl -fsS -o /dev/null http://localhost/up </dev/null 2>/dev/null && break
+  sleep 1
+done
+
+# Passed by name (-e VAR), so the values don't appear in any command line.
+export ADMIN_EMAIL ADMIN_PASSWORD
+docker compose exec -T -e ADMIN_EMAIL -e ADMIN_PASSWORD tree bin/rails db:seed </dev/null
+
+cat <<DONE
+
+Done. Add this to your Caddyfile and reload Caddy:
+
+  $DOMAIN {
+      reverse_proxy tree:80
+  }
+
+Then sign in at https://$DOMAIN/sessions/new
+DONE

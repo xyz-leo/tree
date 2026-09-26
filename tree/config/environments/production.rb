@@ -21,6 +21,15 @@ Rails.application.configure do
   # Enable serving of images, stylesheets, and JavaScripts from an asset server.
   # config.asset_host = "http://assets.example.com"
 
+  # Secret used to sign cookies: SECRET_KEY_BASE if set, otherwise generated on
+  # first boot and kept in storage/ (the Docker volume). Skipped while
+  # precompiling assets in the image build, which uses a dummy secret.
+  unless ENV["SECRET_KEY_BASE"] || ENV["SECRET_KEY_BASE_DUMMY"]
+    secret_file = Rails.root.join("storage/secret_key_base")
+    File.write(secret_file, SecureRandom.hex(64), perm: 0o600) unless secret_file.size?
+    config.secret_key_base = secret_file.read
+  end
+
   # Assume all access to the app is happening through a SSL-terminating reverse proxy.
   config.assume_ssl = true
 

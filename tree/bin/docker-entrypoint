@@ -1,8 +1,7 @@
 #!/bin/bash -e
 
-# If running the rails server then create or migrate the database. On first
-# creation this also runs db/seeds.rb, which creates the admin user from
-# ADMIN_EMAIL and ADMIN_PASSWORD.
+# Create or migrate the database before the server starts. Safe to repeat on
+# every boot. The admin user is created by ./setup, not here.
 if [ "${@: -2:1}" == "./bin/rails" ] && [ "${@: -1:1}" == "server" ]; then
   ./bin/rails db:prepare
 fi

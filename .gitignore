@@ -6,7 +6,6 @@
 /tree/config/*.key
 .env
 .env.*
-!.env.example
 
 # Bundler
 /tree/.bundle

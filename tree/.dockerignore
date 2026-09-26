@@ -1,7 +1,6 @@
 # See https://docs.docker.com/engine/reference/builder/#dockerignore-file for more about ignoring files.
 
-# Lives in the build context root (tree/) so every builder honors it,
-# including the legacy one (Dockerfile.dockerignore needs BuildKit).
+# Lives in the build context root (tree/) so every builder honors it.
 
 # Ignore bundler config.
 /.bundle
@@ -9,8 +8,8 @@
 # Ignore all environment files.
 /.env*
 
-# Ignore all default key files.
-/config/master.key
+# Ignore key files (not used, but never ship them).
+/config/*.key
 /config/credentials/*.key
 
 # Ignore all logfiles and tempfiles.

@@ -1,0 +1,30 @@
+# Run ./setup the first time: it asks for your domain and admin login, writes
+# .env and starts this. After that, `docker compose up -d --build` is enough.
+#
+# The app joins your reverse proxy's Docker network and publishes no ports;
+# point the proxy at tree:80.
+
+services:
+  tree:
+    build: tree
+    image: tree:latest
+    container_name: tree
+    restart: unless-stopped
+    env_file: .env
+    volumes:
+      - storage:/rails/storage   # database and generated secret
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://localhost/up"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+    networks:
+      - proxy
+
+volumes:
+  storage:
+
+networks:
+  proxy:
+    name: ${PROXY_NETWORK:-caddy}
+    external: true

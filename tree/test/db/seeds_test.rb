@@ -26,11 +26,29 @@ class SeedsTest < ActiveSupport::TestCase
     assert_equal 1, User.count
   end
 
-  test "does nothing without credentials" do
+  test "does nothing without an email" do
     assert_no_changes -> { User.pluck(:email_address, :password_digest) } do
       seed "ADMIN_EMAIL" => nil, "ADMIN_PASSWORD" => nil
-      seed "ADMIN_EMAIL" => "me@example.com", "ADMIN_PASSWORD" => ""
+      seed "ADMIN_EMAIL" => "", "ADMIN_PASSWORD" => "a long password"
     end
+  end
+
+  test "without a password, changes only the email" do
+    digest = users(:admin).password_digest
+
+    seed "ADMIN_EMAIL" => "renamed@example.com", "ADMIN_PASSWORD" => ""
+
+    assert_equal "renamed@example.com", User.sole.email_address
+    assert_equal digest, User.sole.password_digest
+    assert User.sole.authenticate("correct horse battery")
+  end
+
+  test "can't create the user without a password" do
+    User.delete_all
+
+    seed "ADMIN_EMAIL" => "me@example.com", "ADMIN_PASSWORD" => nil
+
+    assert_equal 0, User.count
   end
 
   test "rejects a short password" do
