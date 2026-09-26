@@ -36,6 +36,35 @@ class SessionsControllerTest < ActionDispatch::IntegrationTest
     assert_redirected_to admin_root_path
   end
 
+  test "signs in through the form with CSRF protection on" do
+    ActionController::Base.allow_forgery_protection = true
+
+    get new_session_path
+    token = css_select("form[action='/sessions'] input[name=authenticity_token]").first["value"]
+    post session_path, params: { authenticity_token: token, email_address: @user.email_address, password: "correct horse battery" }
+    assert_redirected_to admin_root_path
+
+    follow_redirect!
+    get edit_admin_profile_path
+    token = css_select("form[action='/admin/profile'] input[name=authenticity_token]").first["value"]
+    patch admin_profile_path, params: { authenticity_token: token, profile: { name: "Via Form" } }
+    assert_redirected_to admin_root_path
+    assert_equal "Via Form", profiles(:main).reload.name
+  ensure
+    ActionController::Base.allow_forgery_protection = false
+  end
+
+  test "rejects a sign in without a CSRF token" do
+    ActionController::Base.allow_forgery_protection = true
+
+    post session_path, params: { email_address: @user.email_address, password: "correct horse battery" }
+
+    assert_response :unprocessable_content
+    assert_nil cookies[:session_id]
+  ensure
+    ActionController::Base.allow_forgery_protection = false
+  end
+
   test "rejects a wrong password" do
     post session_path, params: { email_address: @user.email_address, password: "wrong" }
 

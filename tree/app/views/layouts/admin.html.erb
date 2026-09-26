@@ -3,6 +3,7 @@
   <head>
     <title><%= content_for(:title) || "Admin" %></title>
     <meta name="robots" content="noindex, nofollow">
+    <%= csrf_meta_tags %>
     <%= render "layouts/head" %>
   </head>
 

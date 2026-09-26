@@ -6,7 +6,7 @@
       <% hint = link.hint(lang) %>
       <li class="<%= "has-icon" if icon %>">
         <% if icon %><%= render "icons/#{icon}" %><% end %>
-        <%= link_to link.title, link.url %>
+        <%= page_link_to link, lang %>
         <% if hint.present? %><span class="hint"><%= hint %></span><% end %>
       </li>
     <% end %>

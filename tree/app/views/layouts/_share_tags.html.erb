@@ -1,0 +1,15 @@
+<%# Link previews in chat apps and social networks (Open Graph; X/Twitter reads the same tags). %>
+<%= tag.meta property: "og:type", content: "website" %>
+<%= tag.meta property: "og:site_name", content: profile.handle %>
+<%= tag.meta property: "og:title", content: profile.name %>
+<% if description.present? %>
+  <%= tag.meta property: "og:description", content: description %>
+<% end %>
+<%= tag.meta property: "og:url", content: lang_url(lang) %>
+<%= tag.meta property: "og:locale", content: og_locale(lang) %>
+<% (Translatable::LANGS - [ lang ]).each do |other| %>
+  <%= tag.meta property: "og:locale:alternate", content: og_locale(other) %>
+<% end %>
+<%= tag.meta property: "og:image", content: share_image_url %>
+<%= tag.meta property: "og:image:alt", content: profile.name %>
+<%= tag.meta name: "twitter:card", content: "summary" %>

@@ -43,7 +43,7 @@ class LinksControllerTest < ActionDispatch::IntegrationTest
     get root_path
 
     assert_select ".group-list a" do |links|
-      assert_equal [ "GitHub", "Email", "tree" ], links.map(&:text)
+      assert_equal [ "GitHub", "Email", "tree" ], links.map { it.children.first.text.strip }
       assert_equal [ "https://github.com/test-handle", "mailto:test@example.com", "https://example.com/tree" ],
         links.map { it["href"] }
     end
@@ -56,6 +56,29 @@ class LinksControllerTest < ActionDispatch::IntegrationTest
     assert_equal [ "icon-github", "icon-mail", nil ],
       rows.map { |li| li.at_css("svg.icon")&.[]("class")&.split&.last }
     assert_equal [ true, true, false ], rows.map { |li| li["class"].to_s.include?("has-icon") }
+  end
+
+  test "links open in a new tab, except email" do
+    get root_path
+
+    assert_select "a[href='https://github.com/test-handle'][target=_blank][rel=noopener]"
+    assert_select "a[href='https://example.com/tree'][target=_blank][rel=noopener]"
+    assert_select "a[href='mailto:test@example.com']:not([target])"
+  end
+
+  test "screen readers are told about the new tab in the page language" do
+    get root_path
+    assert_select "a[href='https://github.com/test-handle'] .sr-only", "(abre em nova aba)"
+    assert_select "a[href='mailto:test@example.com'] .sr-only", 0
+
+    get en_path
+    assert_select "a[href='https://github.com/test-handle'] .sr-only", "(opens in a new tab)"
+  end
+
+  test "header links stay in the same tab" do
+    get root_path
+
+    assert_select ".site-header a[target]", 0
   end
 
   test "language switch marks the current language" do
@@ -97,7 +120,7 @@ class LinksControllerTest < ActionDispatch::IntegrationTest
     get root_path
 
     assert_equal [ "Projetos", "Social" ], css_select(".group-header").map { it.text.strip }
-    assert_equal [ "tree", "Email", "GitHub" ], css_select(".group-list a").map(&:text)
+    assert_equal [ "tree", "Email", "GitHub" ], css_select(".group-list a").map { it.children.first.text.strip }
   end
 
   test "hides groups without links" do

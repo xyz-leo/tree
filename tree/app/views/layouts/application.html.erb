@@ -9,6 +9,8 @@
       <link rel="alternate" hreflang="<%= html_lang(lang) %>" href="<%= lang_url(lang) %>">
     <% end %>
     <link rel="alternate" hreflang="x-default" href="<%= root_url %>">
+    <link rel="canonical" href="<%= lang_url(@lang) %>">
+    <%= render "layouts/share_tags", profile: @profile, lang: @lang, description: content_for(:description) %>
     <%= render "layouts/head" %>
   </head>
 
