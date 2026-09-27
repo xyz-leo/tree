@@ -8,6 +8,10 @@ password-protected admin panel. There's one admin user, no sign-up and no third-
 - Admin panel at `/admin`, sign in at `/sessions/new`
 - One command to install: `./setup` asks a few questions and starts it with Docker Compose
 
+## Screenshot
+
+<img width="350" height="500" alt="tree_2026-09-26_21-08" src="https://github.com/user-attachments/assets/3cec2e1e-b4e7-4eb7-b9f4-6d2c2401e97b" />
+
 ## Features
 
 - **Profile and grouped links:** name, handle, bio, and link groups (for example "Social",
