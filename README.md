@@ -87,7 +87,7 @@ Docker. The examples use Caddy.
    | Question | Example |
    |---|---|
    | Domain | `links.example.com` |
-   | Docker network of your reverse proxy | `caddy` (created if it doesn't exist) |
+   | Docker network of your reverse proxy | `proxy` (created if it doesn't exist) |
    | Admin email | `you@example.com` |
    | Admin password | 12+ characters |
 

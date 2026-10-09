@@ -26,5 +26,5 @@ volumes:
 
 networks:
   proxy:
-    name: ${PROXY_NETWORK:-caddy}
+    name: ${PROXY_NETWORK:-proxy}
     external: true

@@ -27,8 +27,8 @@ echo
 ask DOMAIN "Domain (e.g. links.example.com)" "$(current APP_HOSTS)"
 while [[ ! "$DOMAIN" =~ ^[A-Za-z0-9.-]+$ ]]; do ask DOMAIN "Enter a domain like links.example.com" ""; done
 
-ask PROXY_NETWORK "Docker network of your reverse proxy" "$(current PROXY_NETWORK | grep . || echo caddy)"
-while [[ ! "$PROXY_NETWORK" =~ ^[A-Za-z0-9_.-]+$ ]]; do ask PROXY_NETWORK "Enter a network name" "caddy"; done
+ask PROXY_NETWORK "Docker network of your reverse proxy" "$(current PROXY_NETWORK | grep . || echo proxy)"
+while [[ ! "$PROXY_NETWORK" =~ ^[A-Za-z0-9_.-]+$ ]]; do ask PROXY_NETWORK "Enter a network name" "proxy"; done
 
 existing_email="$(current_email)"
 ask ADMIN_EMAIL "Admin email" "$existing_email"
