@@ -1,13 +1,20 @@
-<section class="group">
-  <h2 class="group-header label"><%= group.label(lang) %></h2>
+<section class="group" aria-labelledby="group-<%= group.id %>">
+  <div class="group-head">
+    <h2 class="group-header" id="group-<%= group.id %>"><%= group.label(lang) %></h2>
+    <p class="group-count mono"><%= pluralize(group.links.size, "link") %></p>
+  </div>
   <ul class="group-list">
     <% group.links.each do |link| %>
-      <% icon = link_icon_name(link.url) %>
       <% hint = link.hint(lang) %>
-      <li class="<%= "has-icon" if icon %>">
-        <% if icon %><%= render "icons/#{icon}" %><% end %>
-        <%= page_link_to link, lang %>
-        <% if hint.present? %><span class="hint"><%= hint %></span><% end %>
+      <li>
+        <%= page_link_to link, lang, class: "row" do %>
+          <span class="tile"><%= render "icons/#{link_icon_name(link.url) || LinksHelper::DEFAULT_ICON}" %></span>
+          <span class="row-text">
+            <span class="title"><%= link.title %></span>
+            <% if hint.present? %><span class="hint"><%= hint %></span><% end %>
+          </span>
+          <span class="row-url mono"><span class="domain"><%= link_display(link.url) %></span><span class="arrow" aria-hidden="true">↗</span></span>
+        <% end %>
       </li>
     <% end %>
   </ul>

@@ -3,3 +3,4 @@
 pin "application"
 pin "theme"
 pin "confirm"
+pin "spiral"

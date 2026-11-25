@@ -1,14 +1,46 @@
 <% content_for :title, @profile.handle %>
 <% bio = @profile.bio(@lang) %>
-<% content_for :description, bio if bio.present? %>
+<% tagline = @profile.tagline(@lang) %>
+<% en = @lang == "en" %>
+<% link_count = @groups.sum { it.links.size } %>
+<% content_for :description, without_emphasis(bio) if bio.present? %>
 
-<main class="page">
-  <header class="page-header">
-    <h1><%= @profile.name %></h1>
-    <% if bio.present? %>
-      <p class="bio"><%= bio %></p>
+<main id="top">
+  <section class="hero" data-spiral aria-labelledby="profile-name">
+    <canvas class="hero-field" aria-hidden="true"></canvas>
+    <%# Moved over the hovered tile by spiral.js. Keyboard and screen reader
+        users get the same links in the list below. %>
+    <a class="hero-hit" href="#links" tabindex="-1" aria-hidden="true"><span class="hero-tip mono"></span></a>
+
+    <div class="hero-copy">
+      <div class="hero-copy-inner">
+        <% if tagline.present? %>
+          <p class="tagline mono reveal"><span class="dot" aria-hidden="true"></span><%= tagline %></p>
+        <% end %>
+        <div class="mark-wrap">
+          <div class="halo" aria-hidden="true"></div>
+          <h1 class="mark" id="profile-name"><%= @profile.name %></h1>
+        </div>
+        <% if bio.present? %>
+          <p class="bio reveal reveal-2"><%= emphasized(bio) %></p>
+        <% end %>
+        <% if @groups.any? %>
+          <div class="ctas reveal reveal-3">
+            <a class="btn btn-primary" href="#links"><%= render "icons/arrow_down" %><%= en ? "all links" : "todos os links" %></a>
+          </div>
+        <% end %>
+      </div>
+    </div>
+
+    <p class="readout readout-start mono" data-readout aria-hidden="true"><%= en ? "hover a tile to open it" : "passe o mouse num ícone para abrir" %></p>
+    <% if @groups.any? %>
+      <p class="readout readout-end mono" aria-hidden="true">
+        <%= pluralize(link_count, "link") %> · <%= @groups.size %> <%= en ? "group".pluralize(@groups.size) : "grupo".pluralize(@groups.size) %>
+      </p>
     <% end %>
-  </header>
+  </section>
 
-  <%= render partial: "group", collection: @groups, locals: { lang: @lang } %>
+  <div class="links" id="links">
+    <%= render partial: "group", collection: @groups, locals: { lang: @lang } %>
+  </div>
 </main>

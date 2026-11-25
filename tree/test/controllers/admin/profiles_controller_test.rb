@@ -19,6 +19,13 @@ class Admin::ProfilesControllerTest < ActionDispatch::IntegrationTest
     assert_select ".bio", "Nova bio"
   end
 
+  test "update sets the tagline" do
+    patch admin_profile_path, params: { profile: { tagline_pt: "desenvolvedor", tagline_en: "developer" } }
+
+    assert_redirected_to admin_root_path
+    assert_equal [ "desenvolvedor", "developer" ], profiles(:main).reload.values_at(:tagline_pt, :tagline_en)
+  end
+
   test "creates the profile on first save" do
     Profile.delete_all
 
