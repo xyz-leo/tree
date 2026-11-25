@@ -18,6 +18,6 @@ class Admin::ProfilesController < Admin::BaseController
     end
 
     def profile_params
-      params.expect(profile: %i[ name handle bio_pt bio_en ])
+      params.expect(profile: %i[ name handle tagline_pt tagline_en bio_pt bio_en ])
     end
 end

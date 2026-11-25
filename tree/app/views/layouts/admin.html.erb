@@ -10,7 +10,7 @@
   <body>
     <header class="site-header">
       <div class="site-header-inner">
-        <%= link_to "tree", root_path, class: "brand" %>
+        <%= link_to root_path, class: "brand mono" do %><span class="dot" aria-hidden="true"></span>tree<% end %>
         <nav class="site-header-right" aria-label="Admin">
           <% if authenticated? %>
             <%= link_to "Admin", admin_root_path, class: "header-link" %>

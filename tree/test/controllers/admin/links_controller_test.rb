@@ -19,7 +19,7 @@ class Admin::LinksControllerTest < ActionDispatch::IntegrationTest
 
     assert_redirected_to admin_root_path
     get root_path
-    assert_select "li.has-icon", /YouTube/
+    assert_select ".row:has(svg.icon-youtube) .title", "YouTube"
   end
 
   test "rejects unsafe URLs" do

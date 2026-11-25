@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_09_26_205613) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_25_002447) do
   create_table "link_groups", force: :cascade do |t|
     t.string "label_pt", null: false
     t.string "label_en"
@@ -38,6 +38,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_26_205613) do
     t.text "bio_en"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "tagline_pt"
+    t.string "tagline_en"
   end
 
   create_table "sessions", force: :cascade do |t|

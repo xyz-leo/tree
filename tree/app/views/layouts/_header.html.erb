@@ -1,10 +1,9 @@
 <header class="site-header">
   <div class="site-header-inner">
-    <%= link_to profile.handle, lang_path(lang), class: "brand" %>
+    <%= link_to lang_path(lang), class: "brand mono" do %><span class="dot" aria-hidden="true"></span><%= profile.handle %><% end %>
     <nav class="site-header-right" aria-label="Idioma / Language">
-      <div class="lang-switch">
-        <% Translatable::LANGS.each_with_index do |option, i| %>
-          <% if i > 0 %><span class="lang-sep" aria-hidden="true">|</span><% end %>
+      <div class="lang-switch mono">
+        <% Translatable::LANGS.each do |option| %>
           <%= link_to option.upcase, lang_path(option),
                 class: [ "lang-option", { active: option == lang } ],
                 hreflang: html_lang(option), lang: html_lang(option),

@@ -18,8 +18,21 @@
     </div>
 
     <div class="field">
+      <%= form.label :tagline_pt, "Tagline (PT)" %>
+      <%= form.text_field :tagline_pt %>
+      <small>Optional short line above your name, for example "desenvolvedor backend, rails".</small>
+    </div>
+
+    <div class="field">
+      <%= form.label :tagline_en, "Tagline (EN)" %>
+      <%= form.text_field :tagline_en %>
+      <small>Leave blank to use the Portuguese text.</small>
+    </div>
+
+    <div class="field">
       <%= form.label :bio_pt, "Bio (PT)" %>
       <%= form.text_area :bio_pt, rows: 3 %>
+      <small>Shown under your name. Put words between asterisks to highlight them: <code>I build *small tools*</code>.</small>
     </div>
 
     <div class="field">

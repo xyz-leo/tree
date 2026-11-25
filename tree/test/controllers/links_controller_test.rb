@@ -43,19 +43,63 @@ class LinksControllerTest < ActionDispatch::IntegrationTest
     get root_path
 
     assert_select ".group-list a" do |links|
-      assert_equal [ "GitHub", "Email", "tree" ], links.map { it.children.first.text.strip }
+      assert_equal [ "GitHub", "Email", "tree" ], links.map { it.at_css(".title").text.strip }
       assert_equal [ "https://github.com/test-handle", "mailto:test@example.com", "https://example.com/tree" ],
         links.map { it["href"] }
     end
   end
 
-  test "known sites and email get an icon, other links keep the bullet" do
+  test "known sites and email get their icon, other links the link icon" do
     get root_path
 
-    rows = css_select(".group-list li")
-    assert_equal [ "icon-github", "icon-mail", nil ],
-      rows.map { |li| li.at_css("svg.icon")&.[]("class")&.split&.last }
-    assert_equal [ true, true, false ], rows.map { |li| li["class"].to_s.include?("has-icon") }
+    assert_equal [ "icon-github", "icon-mail", "icon-link" ],
+      css_select(".group-list .tile svg.icon").map { it["class"].split.last }
+  end
+
+  test "each link shows its short address" do
+    get root_path
+
+    assert_equal [ "github.com", "test@example.com", "example.com" ], css_select(".group-list .domain").map { it.text.strip }
+  end
+
+  test "shows the tagline in the page language" do
+    profiles(:main).update!(tagline_pt: "desenvolvedor backend", tagline_en: "backend developer")
+
+    get root_path
+    assert_select ".tagline", "desenvolvedor backend"
+
+    get en_path
+    assert_select ".tagline", "backend developer"
+  end
+
+  test "no tagline element without a tagline" do
+    get root_path
+
+    assert_select ".tagline", 0
+  end
+
+  test "words between asterisks in the bio are highlighted" do
+    profiles(:main).update!(bio_pt: "Eu faço *ferramentas pequenas* com Rails.")
+
+    get root_path
+
+    assert_select ".bio", "Eu faço ferramentas pequenas com Rails."
+    assert_select ".bio em", "ferramentas pequenas"
+    assert_select "meta[name=description][content=?]", "Eu faço ferramentas pequenas com Rails."
+  end
+
+  test "the hero counts the links and groups" do
+    get root_path
+    assert_select ".readout-end", "3 links · 2 grupos"
+
+    get en_path
+    assert_select ".readout-end", "3 links · 2 groups"
+  end
+
+  test "the hero link sits outside the tab order" do
+    get root_path
+
+    assert_select ".hero-hit[tabindex='-1'][aria-hidden=true]", 1
   end
 
   test "links open in a new tab, except email" do
@@ -120,7 +164,7 @@ class LinksControllerTest < ActionDispatch::IntegrationTest
     get root_path
 
     assert_equal [ "Projetos", "Social" ], css_select(".group-header").map { it.text.strip }
-    assert_equal [ "tree", "Email", "GitHub" ], css_select(".group-list a").map { it.children.first.text.strip }
+    assert_equal [ "tree", "Email", "GitHub" ], css_select(".group-list .title").map { it.text.strip }
   end
 
   test "hides groups without links" do

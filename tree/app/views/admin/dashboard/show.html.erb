@@ -8,6 +8,8 @@
   <dl class="details">
     <dt>Name</dt><dd><%= @profile.name %></dd>
     <dt>Handle</dt><dd><%= @profile.handle %></dd>
+    <dt>Tagline (PT)</dt><dd><%= @profile.tagline_pt.presence || "—" %></dd>
+    <dt>Tagline (EN)</dt><dd><%= @profile.tagline_en.presence || "—" %></dd>
     <dt>Bio (PT)</dt><dd><%= @profile.bio_pt.presence || "—" %></dd>
     <dt>Bio (EN)</dt><dd><%= @profile.bio_en.presence || "—" %></dd>
   </dl>

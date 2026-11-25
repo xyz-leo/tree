@@ -14,12 +14,19 @@ password-protected admin panel. There's one admin user, no sign-up and no third-
 
 ## Features
 
-- **Profile and grouped links:** name, handle, bio, and link groups (for example "Social",
-  "Projects"), each with its own ordered links and an optional short hint.
+- **Spiral hero:** your links drift out along slowly turning spiral arms around your name,
+  with light pulses running along them. Hovering a tile stops it and opens the link on click;
+  the cursor nudges the other tiles aside and a click sends a ripple. Drawn on a 2D canvas in
+  one small JS module, no library. It pauses off screen and shows a still frame to visitors
+  who ask their system for less motion.
+- **Profile and grouped links:** name, handle, a short tagline above the name, bio, and link
+  groups (for example "Social", "Projects"), each with its own ordered links and an optional
+  short hint. Words in the bio between `*asterisks*` are highlighted.
 - **Two languages without I18n:** every text field has a Portuguese and an English version.
   English is optional and falls back to Portuguese.
 - **Site icons from the URL:** links to GitHub, Instagram, X/Twitter, LinkedIn, Facebook,
-  YouTube and `mailto:` get their icon automatically; other links get a `›` bullet.
+  YouTube and `mailto:` get their icon automatically; other links get a generic link icon.
+  The same icons fill the tiles in the spiral.
 - **Light and dark themes:** dark by default. The choice is saved in the browser and applied
   before the first paint, so there's no flash.
 - **Link previews:** Open Graph and Twitter card tags, so a pasted link shows a card with your
@@ -37,7 +44,7 @@ password-protected admin panel. There's one admin user, no sign-up and no third-
 | Frameworks loaded | Active Record, Action Controller, Action View, Active Model | No mailer, jobs, file storage or websockets. Nothing here needs them. |
 | Database | SQLite in a Docker volume | One small table per concept, one writer. No database server to run. |
 | Auth | Rails' built-in authentication generator, trimmed | One user, created by `./setup`. The password is only ever stored as a bcrypt hash in the database, never in a file. No password reset (it needs email) and no sign-up. |
-| Frontend | Server-rendered ERB, plain CSS, 3 small JS modules via importmap | No Node, no bundler, no CSS framework, no JS framework. |
+| Frontend | Server-rendered ERB, plain CSS, 4 small JS modules via importmap | No Node, no bundler, no CSS framework, no JS framework. |
 | Languages | Two routes (`/` and `/en`) and `_pt`/`_en` columns | Simpler than Rails I18n for a single page with user-written text. |
 | Fonts and icons | Self-hosted `.woff2` files, inline SVG icons | No requests to other sites. |
 | Deploy | Docker Compose, set up by `./setup` | The image contains the app; the container prepares its own database and secret. No Kamal: its proxy would compete with Caddy for ports 80/443. |
