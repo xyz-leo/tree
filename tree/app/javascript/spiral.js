@@ -70,8 +70,11 @@ function start(hero) {
     canvas.width = Math.round(W * dpr)
     canvas.height = Math.round(H * dpr)
 
-    const half = Math.hypot(W, H) / 2
     const mobile = W < 640
+    // On a narrow screen a round spiral spills off the sides, so the spiral
+    // is drawn in a square of the hero's height and squeezed to its width.
+    const sx = mobile ? W / H : 1
+    const half = mobile ? Math.hypot(H, H) / 2 : Math.hypot(W, H) / 2
     const arms = mobile ? 2 : 3
     const thetaMax = (mobile ? 1.15 : 1.4) * Math.PI * 2
     const rMax = 0.88 * half
@@ -109,7 +112,7 @@ function start(hero) {
 
     const box = copy.getBoundingClientRect()
     L = {
-      W, H, cx: W / 2, cy: H / 2, half, arms, perArm, b, rMax, thetaBirth, thetaExit,
+      W, H, cx: W / 2, cy: H / 2, half, sx, arms, perArm, b, rMax, thetaBirth, thetaExit,
       tileMax, tileMin: tileMax * 0.45, armList, ticks,
       circR: Math.min(W, H) * (mobile ? 0.42 : 0.36),
       keepW: Math.max(60, box.width / 2 * 0.95), keepH: Math.max(60, box.height / 2 * 0.85)
@@ -133,6 +136,31 @@ function start(hero) {
     ripples.push({ x: event.clientX - rect.left - L.cx, y: event.clientY - rect.top - L.cy, t: performance.now() })
   })
 
+  // Touch has no hover, so a tap on a tile opens its link directly. A drag
+  // that scrolls the page ends in pointercancel, not pointerup.
+  let lastTiles = []
+  let tap = null
+  hero.addEventListener("pointerdown", (event) => {
+    tap = event.pointerType === "touch" ? { x: event.clientX, y: event.clientY, t: performance.now() } : null
+  })
+  hero.addEventListener("pointercancel", () => { tap = null })
+  hero.addEventListener("pointerup", (event) => {
+    if (!tap || event.target.closest("a, button")) return
+    const moved = Math.hypot(event.clientX - tap.x, event.clientY - tap.y)
+    const quick = performance.now() - tap.t < 600
+    tap = null
+    if (moved > 12 || !quick) return
+    const rect = hero.getBoundingClientRect()
+    const x = event.clientX - rect.left - L.cx, y = event.clientY - rect.top - L.cy
+    for (let i = lastTiles.length - 1; i >= 0; i--) {
+      const tile = lastTiles[i], h = tile.s / 2 + 8
+      if (tile.a < 0.3 || Math.abs(x - tile.x) > h || Math.abs(y - tile.y) > h) continue
+      if (tile.link.target === "_blank") window.open(tile.link.href, "_blank", "noopener")
+      else location.href = tile.link.href
+      return
+    }
+  })
+
   // ---- drawing ----
   const startText = readout?.textContent ?? ""
   let lastT = 0
@@ -153,17 +181,23 @@ function start(hero) {
     pointer.k += ((pointer.on ? 1 : 0) - pointer.k) * 0.08
 
     // arms, ticks, pulses and the dashed ring
+    // The spiral is turned, then squeezed by sx. Paths are transformed
+    // before stroking so the lines keep an even width.
+    const cs = Math.cos(spin), sn = Math.sin(spin)
+    const toScreen = (x, y) => [ (x * cs - y * sn) * L.sx, x * sn + y * cs ]
+    const matrix = new DOMMatrix([ cs * L.sx, sn, -sn * L.sx, cs, 0, 0 ])
+    const squeezed = (path) => { const out = new Path2D(); out.addPath(path, matrix); return out }
+
     ctx.save()
     ctx.beginPath()
-    ctx.arc(0, 0, Math.max(1, waveR), 0, Math.PI * 2)
+    ctx.ellipse(0, 0, Math.max(1, waveR * L.sx), Math.max(1, waveR), 0, 0, Math.PI * 2)
     ctx.clip()
-    ctx.rotate(spin)
     ctx.lineWidth = 1
     ctx.strokeStyle = colors.line
-    for (const arm of L.armList) ctx.stroke(arm.path)
+    for (const arm of L.armList) ctx.stroke(squeezed(arm.path))
     ctx.globalAlpha = 0.9
     ctx.strokeStyle = colors.muted
-    ctx.stroke(L.ticks)
+    ctx.stroke(squeezed(L.ticks))
 
     ctx.strokeStyle = colors.pulse
     ctx.lineCap = "round"
@@ -178,14 +212,14 @@ function start(hero) {
         ctx.globalAlpha = g * (dark ? 1 : 0.85)
         ctx.lineWidth = 1 + 3 * g
         ctx.beginPath()
-        ctx.moveTo(p[i], p[i + 1])
-        ctx.lineTo(p[i + 3], p[i + 4])
+        ctx.moveTo(...toScreen(p[i], p[i + 1]))
+        ctx.lineTo(...toScreen(p[i + 3], p[i + 4]))
         ctx.stroke()
       }
     })
     ctx.globalAlpha = 1
     ctx.lineCap = "butt"
-    ctx.rotate(-spin * 3)
+    ctx.rotate(-spin * 2)
     ctx.setLineDash([ 2, 9 ])
     ctx.strokeStyle = colors.muted
     ctx.lineWidth = 1
@@ -221,7 +255,7 @@ function start(hero) {
         const th = L.thetaBirth + u * (L.thetaExit - L.thetaBirth)
         const r = L.b * th
         const angle = th + L.armList[a].off + spinNow
-        const bx = r * Math.cos(angle), by = r * Math.sin(angle)
+        const bx = r * Math.cos(angle) * L.sx, by = r * Math.sin(angle)
         const size = L.tileMin + (L.tileMax - L.tileMin) * smooth(0, L.rMax, r)
 
         // the cursor nudges tiles aside, but never the one right under it
@@ -252,6 +286,7 @@ function start(hero) {
       }
     }
     tiles.sort((p, q) => p.s - q.s)
+    lastTiles = tiles
 
     // hover: keep the current tile while the cursor stays near it
     if (hotId >= 0) {
@@ -261,7 +296,8 @@ function start(hero) {
       if (!keep) {
         if (current) { // hand the tile back to the field without a jump
           const st = state[hotId]
-          const [ nx, ny ] = rotate(current.bx, current.by, spin - st.spinLock)
+          const [ ux, uy ] = rotate(current.bx / L.sx, current.by, spin - st.spinLock)
+          const nx = ux * L.sx, ny = uy
           st.dx += current.bx - nx
           st.dy += current.by - ny
         }
@@ -396,12 +432,19 @@ function splitName(heading) {
   const name = heading.textContent.trim()
   heading.setAttribute("aria-label", name)
   heading.textContent = ""
-  ;[ ...name ].forEach((char, i) => {
-    const span = document.createElement("span")
-    span.textContent = char
-    span.setAttribute("aria-hidden", "true")
-    span.style.setProperty("--i", i)
-    heading.appendChild(span)
+  let i = 0
+  name.split(/\s+/).forEach((word, w) => {
+    if (w) heading.append(" ")
+    const group = document.createElement("span")
+    group.className = "word"
+    group.setAttribute("aria-hidden", "true")
+    for (const char of word) {
+      const span = document.createElement("span")
+      span.textContent = char
+      span.style.setProperty("--i", i++)
+      group.appendChild(span)
+    }
+    heading.appendChild(group)
   })
 }
 

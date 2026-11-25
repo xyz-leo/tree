@@ -32,7 +32,7 @@
       </div>
     </div>
 
-    <p class="readout readout-start mono" data-readout aria-hidden="true"><%= en ? "hover a tile to open it" : "passe o mouse num ícone para abrir" %></p>
+    <p class="readout readout-start mono" data-readout aria-hidden="true"></p>
     <% if @groups.any? %>
       <p class="readout readout-end mono" aria-hidden="true">
         <%= pluralize(link_count, "link") %> · <%= @groups.size %> <%= en ? "group".pluralize(@groups.size) : "grupo".pluralize(@groups.size) %>

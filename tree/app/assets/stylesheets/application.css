@@ -179,9 +179,9 @@ body {
   color: var(--ink-strong);
   text-wrap: balance;
 }
-.mark span {
+.mark .word { display: inline-block; white-space: nowrap; }
+.mark .word span {
   display: inline-block;
-  white-space: pre;
   text-shadow: 0 0 .6vw color-mix(in srgb, var(--bg) 92%, transparent), 0 .4vw 5vw color-mix(in srgb, var(--bg) 60%, transparent);
 }
 .tagline { display: inline-flex; align-items: center; gap: .6rem; color: var(--muted); margin-bottom: 1.3rem; }
@@ -228,7 +228,7 @@ body {
 @media (hover: none) { .readout-start { display: none; } }
 
 /* intro: the name rises letter by letter, then the rest fades up */
-.intro .mark span { animation: letter 1s var(--ease-out) both; animation-delay: calc(var(--i) * 45ms + 250ms); }
+.intro .mark .word span { animation: letter 1s var(--ease-out) both; animation-delay: calc(var(--i) * 45ms + 250ms); }
 .intro .reveal { animation: reveal .9s var(--ease-out) both; animation-delay: 700ms; }
 .intro .reveal-2 { animation-delay: 820ms; }
 .intro .reveal-3 { animation-delay: 940ms; }
@@ -318,7 +318,7 @@ body {
   .readout-end { display: none; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .intro .mark span, .intro .reveal, .hero-tip { animation: none; }
+  .intro .mark .word span, .intro .reveal, .hero-tip { animation: none; }
   .tile, .row .arrow { transition: none; }
 }
 
